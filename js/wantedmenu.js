@@ -73,7 +73,7 @@ const violations = [
 
     { 
         level: 5, 
-        description: "Tội phạm nguy hiểm cấp độ 5", 
+        description: "Tội phạm nguy hiểm cấp độ 5 ( 500p )", 
         fine: 0, 
         punishment: 500, 
         crimes: [
@@ -98,6 +98,9 @@ const violationList = document.getElementById("violation-list");
 const embedCrimes = document.getElementById("embed-crimes");
 const embedTotal = document.getElementById("embed-total");
 const embedFine = document.getElementById("embed-fine");
+
+// Đối tượng để lưu số lần vi phạm của từng tội danh
+const violationCounts = {};
 
 // Hàm tạo checkbox cho tội danh
 function renderCrimeCheckboxes() {
@@ -139,12 +142,13 @@ function updateEmbed() {
         let punishment = parseInt(checkbox.dataset.punishment, 10);
 
         // Xử lý logic đặc biệt cho Mức độ 6
-        if (level === 6 && crime.includes("Bạo Động")) {
-            const multiplier = prompt("Số lần thực hiện hành vi Bạo Động (tối đa 5 lần):", 1);
-            punishment = Math.min(5, parseInt(multiplier, 10)) * 200;
-        } else if (level === 6 && crime.includes("tấn công trụ sở")) {
-            const multiplier = prompt("Số lần tấn công trụ sở (tối đa 5 lần):", 1);
-            punishment = Math.min(5, parseInt(multiplier, 10)) * 200;
+        if (level === 6) {
+            if (!violationCounts[crime]) {
+                // Chỉ hỏi người dùng nếu tội danh chưa được xử lý
+                const multiplier = prompt(`Số lần thực hiện hành vi "${crime}" (tối đa 5 lần):`, 1);
+                violationCounts[crime] = Math.min(5, parseInt(multiplier, 10));
+            }
+            punishment = violationCounts[crime] * 200; // Cập nhật số phút dựa trên số lần
         }
 
         selectedCrimes.push(crime);
@@ -157,5 +161,26 @@ function updateEmbed() {
     embedFine.textContent = `${totalFine}$`;
 }
 
+// Hàm sao chép thông tin
+function copyEmbedContent() {
+    const embedText = `Tên: (Chưa cung cấp)
+CCCD: (Chưa cung cấp)
+Tội danh: ${embedCrimes.textContent}
+Mức án: ${embedTotal.textContent}
+Tiền phạt: ${embedFine.textContent}`;
+
+    const tempTextArea = document.createElement('textarea');
+    tempTextArea.value = embedText;
+    document.body.appendChild(tempTextArea);
+    tempTextArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempTextArea);
+
+    alert('Thông tin đã được sao chép vào clipboard!');
+}
+
 // Khởi tạo danh sách tội danh
 renderCrimeCheckboxes();
+
+// Thêm sự kiện click cho nút "Sao chép"
+document.getElementById('copy-btn').addEventListener('click', copyEmbedContent);
