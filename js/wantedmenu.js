@@ -73,7 +73,7 @@ const violations = [
 
     { 
         level: 5, 
-        description: "Tội phạm nguy hiểm cấp độ 5 ( 500p )", 
+        description: "Tội phạm nguy hiểm cấp độ 5", 
         fine: 0, 
         punishment: 500, 
         crimes: [
@@ -136,6 +136,8 @@ function updateEmbed() {
     let totalMinutes = 0;
     let totalFine = 0;
 
+    let level1to5Minutes = 0; // Tổng số phút của các mức độ 1 đến 5
+
     document.querySelectorAll("input[type='checkbox']:checked").forEach((checkbox) => {
         const crime = checkbox.value;
         const level = parseInt(checkbox.dataset.level, 10);
@@ -149,11 +151,20 @@ function updateEmbed() {
                 violationCounts[crime] = Math.min(5, parseInt(multiplier, 10));
             }
             punishment = violationCounts[crime] * 200; // Cập nhật số phút dựa trên số lần
+        } else if (level >= 1 && level <= 5) {
+            level1to5Minutes += punishment;
         }
 
         selectedCrimes.push(crime);
         totalMinutes += punishment;
     });
+
+    // Kiểm tra giới hạn 500 phút cho các mức độ 1 đến 5
+    if (level1to5Minutes > 500) {
+        const excess = level1to5Minutes - 500;
+        totalMinutes -= excess;
+        level1to5Minutes = 500; // Giới hạn mức độ 1-5 tối đa là 500 phút
+    }
 
     // Cập nhật hiển thị
     embedCrimes.textContent = selectedCrimes.length > 0 ? selectedCrimes.join(", ") : "(Chưa chọn)";
