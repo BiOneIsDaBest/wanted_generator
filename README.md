@@ -1,4 +1,4 @@
-# Violation Management System
+# PA WANTED GENERATURE
 This is a JavaScript-based project designed to manage violations and calculate penalties for different levels of offenses. It supports dynamic interaction through a user-friendly interface, with features like custom logic for specific scenarios, such as "Combo Súng" and configurable maximum penalties.
 
 Features
