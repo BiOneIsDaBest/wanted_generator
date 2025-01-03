@@ -176,19 +176,32 @@ function updateEmbed() {
         const level = parseInt(checkbox.dataset.level, 10);
 
         if (level === 6) {
+            // Xử lý mức độ 6: Yêu cầu nhập số lần vi phạm
             if (!violationCounts[crime]) {
-                const multiplier = prompt(`Số lần thực hiện hành vi "${crime}" (tối đa 5 lần):`, 1);
-                violationCounts[crime] = Math.min(5, parseInt(multiplier, 10));
+                let multiplier = prompt(`Số lần thực hiện hành vi "${crime}" (1–5 lần):`, 1);
+                multiplier = Math.min(5, Math.max(1, parseInt(multiplier, 10) || 1)); // Đảm bảo giá trị hợp lệ
+                violationCounts[crime] = multiplier;
             }
             totalMinutes += violationCounts[crime] * punishment;
+            selectedCrimes.push(`${crime} (${violationCounts[crime]} lần)`);
         } else if (crime === "Combo Súng") {
+            // Logic Combo Súng
             hasComboGun = true;
-            selectedCrimes = ["Sử dụng vũ khí nóng nơi công cộng ( KTNVQS +60p )"];
+            selectedCrimes.push("Sử dụng vũ khí nóng nơi công cộng ( KTNVQS +60p )");
+            totalMinutes += 30;
         } else {
-            if (!hasComboGun || !["Tàng trữ vũ khí nóng trái phép", "Sử dụng vũ khí nóng trái phép", "Sử dụng vũ khí nóng nơi công cộng"].includes(crime)) {
+            // Loại bỏ các tội danh liên quan đến Combo Súng
+            const comboRelatedCrimes = [
+                "Tàng trữ vũ khí nóng trái phép",
+                "Sử dụng vũ khí nóng trái phép",
+                "Sử dụng vũ khí nóng nơi công cộng"
+            ];
+
+            if (!hasComboGun || !comboRelatedCrimes.includes(crime)) {
                 selectedCrimes.push(crime);
                 totalMinutes += punishment;
                 totalFine += parseInt(checkbox.dataset.fine, 10);
+
                 if (level >= 1 && level <= 5) {
                     level1to5Minutes += punishment;
                 }
@@ -196,13 +209,10 @@ function updateEmbed() {
         }
     });
 
+    // Kiểm tra giới hạn mức độ 1-5
     if (level1to5Minutes > 500) {
         const excess = level1to5Minutes - 500;
         totalMinutes -= excess;
-    }
-
-    if (hasComboGun) {
-        totalMinutes += 30;
     }
 
     embedCrimes.textContent = selectedCrimes.join(", ");
