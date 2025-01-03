@@ -67,20 +67,18 @@ const violations = [
         fine: 0, 
         punishment: 180, 
         crimes: [
-            "Lợi dụng quyền ra tòa để bỏ trốn",
+            "Lợi dụng quyền ra tòa để bỏ trốn"
         ]
     },
-
     { 
         level: 5, 
-        description: "Tội phạm nguy hiểm cấp độ 5", 
+        description: "Tội phạm nguy hiểm cấp độ 5 (500p)", 
         fine: 0, 
         punishment: 500, 
         crimes: [
             "Tấn công Thống đốc; Phó Thống đốc; Nhân viên Chính phủ (chữ vàng)"
         ]
     },
-
     { 
         level: 6, 
         description: "Tội phạm bạo động và tấn công trụ sở", 
@@ -93,33 +91,68 @@ const violations = [
     }
 ];
 
-// Lấy các phần tử DOM
 const violationList = document.getElementById("violation-list");
 const embedCrimes = document.getElementById("embed-crimes");
 const embedTotal = document.getElementById("embed-total");
 const embedFine = document.getElementById("embed-fine");
 
-// Đối tượng để lưu số lần vi phạm của từng tội danh
-const violationCounts = {};
+const violationCounts = {}; // Đối tượng để lưu số lần vi phạm của từng tội danh
 
-// Hàm tạo checkbox cho tội danh
 function renderCrimeCheckboxes() {
     violations.forEach((levelData) => {
         const section = document.createElement("div");
         section.className = "violation-section";
 
-        // Hiển thị tiêu đề với tên riêng
         const levelTitle = document.createElement("h3");
         levelTitle.textContent = `Mức độ ${levelData.level}: ${levelData.description}`;
         section.appendChild(levelTitle);
+
+        // Thêm logic Combo Súng cho mức độ 2
+        if (levelData.level === 2) {
+            const comboBox = document.createElement("input");
+            comboBox.type = "checkbox";
+            comboBox.value = "Combo Súng";
+            comboBox.dataset.punishment = 30;
+            comboBox.addEventListener("change", function () {
+                const relatedCrimes = [
+                    "Tàng trữ vũ khí nóng trái phép",
+                    "Sử dụng vũ khí nóng trái phép",
+                    "Sử dụng vũ khí nóng nơi công cộng"
+                ];
+
+                if (comboBox.checked) {
+                    document.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+                        if (relatedCrimes.includes(checkbox.value)) {
+                            checkbox.checked = false;
+                            checkbox.disabled = true;
+                        }
+                    });
+                } else {
+                    document.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+                        if (relatedCrimes.includes(checkbox.value)) {
+                            checkbox.disabled = false;
+                        }
+                    });
+                }
+                updateEmbed();
+            });
+
+            const comboLabel = document.createElement("label");
+            comboLabel.style.fontWeight = "bold";
+            comboLabel.style.color = "red";
+            comboLabel.textContent = " Combo Súng";
+            section.appendChild(comboBox);
+            section.appendChild(comboLabel);
+            section.appendChild(document.createElement("br"));
+        }
 
         levelData.crimes.forEach((crime) => {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.value = crime;
-            checkbox.dataset.punishment = levelData.punishment; // Gắn số phút phạt tù
-            checkbox.dataset.fine = levelData.fine; // Gắn tiền phạt
-            checkbox.dataset.level = levelData.level; // Gắn mức độ
+            checkbox.dataset.punishment = levelData.punishment;
+            checkbox.dataset.fine = levelData.fine;
+            checkbox.dataset.level = levelData.level;
             checkbox.addEventListener("change", updateEmbed);
             section.appendChild(checkbox);
             section.append(` ${crime}`);
@@ -130,52 +163,57 @@ function renderCrimeCheckboxes() {
     });
 }
 
-// Hàm cập nhật thông tin embed
 function updateEmbed() {
     let selectedCrimes = [];
     let totalMinutes = 0;
     let totalFine = 0;
-
-    let level1to5Minutes = 0; // Tổng số phút của các mức độ 1 đến 5
+    let level1to5Minutes = 0;
+    let hasComboGun = false;
 
     document.querySelectorAll("input[type='checkbox']:checked").forEach((checkbox) => {
         const crime = checkbox.value;
+        const punishment = parseInt(checkbox.dataset.punishment, 10);
         const level = parseInt(checkbox.dataset.level, 10);
-        let punishment = parseInt(checkbox.dataset.punishment, 10);
 
-        // Xử lý logic đặc biệt cho Mức độ 6
         if (level === 6) {
             if (!violationCounts[crime]) {
-                // Chỉ hỏi người dùng nếu tội danh chưa được xử lý
                 const multiplier = prompt(`Số lần thực hiện hành vi "${crime}" (tối đa 5 lần):`, 1);
                 violationCounts[crime] = Math.min(5, parseInt(multiplier, 10));
             }
-            punishment = violationCounts[crime] * 200; // Cập nhật số phút dựa trên số lần
-        } else if (level >= 1 && level <= 5) {
-            level1to5Minutes += punishment;
+            totalMinutes += violationCounts[crime] * punishment;
+        } else if (crime === "Combo Súng") {
+            hasComboGun = true;
+            selectedCrimes = ["Sử dụng vũ khí nóng nơi công cộng ( KTNVQS +60p )"];
+        } else {
+            if (!hasComboGun || !["Tàng trữ vũ khí nóng trái phép", "Sử dụng vũ khí nóng trái phép", "Sử dụng vũ khí nóng nơi công cộng"].includes(crime)) {
+                selectedCrimes.push(crime);
+                totalMinutes += punishment;
+                totalFine += parseInt(checkbox.dataset.fine, 10);
+                if (level >= 1 && level <= 5) {
+                    level1to5Minutes += punishment;
+                }
+            }
         }
-
-        selectedCrimes.push(crime);
-        totalMinutes += punishment;
     });
 
-    // Kiểm tra giới hạn 500 phút cho các mức độ 1 đến 5
     if (level1to5Minutes > 500) {
         const excess = level1to5Minutes - 500;
         totalMinutes -= excess;
-        level1to5Minutes = 500; // Giới hạn mức độ 1-5 tối đa là 500 phút
     }
 
-    // Cập nhật hiển thị
-    embedCrimes.textContent = selectedCrimes.length > 0 ? selectedCrimes.join(", ") : "(Chưa chọn)";
+    if (hasComboGun) {
+        totalMinutes += 30;
+    }
+
+    embedCrimes.textContent = selectedCrimes.join(", ");
     embedTotal.textContent = `${totalMinutes} phút`;
     embedFine.textContent = `${totalFine}$`;
 }
 
 // Hàm sao chép thông tin
 function copyEmbedContent() {
-    const embedText = `Tên: (Chưa cung cấp)
-CCCD: (Chưa cung cấp)
+    const embedText = `Tên: 
+CCCD: 
 Tội danh: ${embedCrimes.textContent}
 Mức án: ${embedTotal.textContent}
 Tiền phạt: ${embedFine.textContent}`;
