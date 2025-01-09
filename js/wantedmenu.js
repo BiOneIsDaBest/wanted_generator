@@ -55,10 +55,10 @@ const violations = [
         fine: 0, 
         punishment: 120, 
         crimes: [
-            "Tấn công Cán bộ Cấp cao",
+            "Tấn công Cán bộ Cấp Cao",
             "Tấn công Nhân viên y tế",
-            "Có lời nói, hành động đe dọa nhân viên Chính Phủ (Chữ vàng)",
-            "Tấn công Nhân viên báo chí"
+            "Tấn công Nhân viên báo chí",
+            "Có lời nói, hành động đe dọa nhân viên Chính Phủ (Chữ vàng)"
         ]
     },
     { 
@@ -91,24 +91,23 @@ const violations = [
     }
 ];
 
+// Lấy các phần tử DOM
 const violationList = document.getElementById("violation-list");
 const embedCrimes = document.getElementById("embed-crimes");
 const embedTotal = document.getElementById("embed-total");
-const embedFine = document.getElementById("embed-fine");
 
-const violationCounts = {}; // Đối tượng để lưu số lần vi phạm của từng tội danh
-
+// Hàm tạo checkbox và ô nhập số lần
 function renderCrimeCheckboxes() {
-    violations.forEach((levelData) => {
+    violations.forEach(level => {
         const section = document.createElement("div");
         section.className = "violation-section";
 
-        const levelTitle = document.createElement("h3");
-        levelTitle.textContent = `Mức độ ${levelData.level}: ${levelData.description}`;
-        section.appendChild(levelTitle);
+        const title = document.createElement("h3");
+        title.textContent = `Mức độ ${level.level}: ${level.description}`;
+        section.appendChild(title);
 
-        // Thêm logic Combo Súng cho mức độ 2
-        if (levelData.level === 2) {
+        // Thêm logic cho Combo Súng (Mức độ 2)
+        if (level.level === 2) {
             const comboBox = document.createElement("input");
             comboBox.type = "checkbox";
             comboBox.value = "Combo Súng";
@@ -121,14 +120,14 @@ function renderCrimeCheckboxes() {
                 ];
 
                 if (comboBox.checked) {
-                    document.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+                    document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
                         if (relatedCrimes.includes(checkbox.value)) {
                             checkbox.checked = false;
                             checkbox.disabled = true;
                         }
                     });
                 } else {
-                    document.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+                    document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
                         if (relatedCrimes.includes(checkbox.value)) {
                             checkbox.disabled = false;
                         }
@@ -146,87 +145,124 @@ function renderCrimeCheckboxes() {
             section.appendChild(document.createElement("br"));
         }
 
-        levelData.crimes.forEach((crime) => {
+        level.crimes.forEach(crime => {
+            const container = document.createElement("div");
+            container.style.display = "flex";
+            container.style.alignItems = "center";
+            container.style.marginBottom = "10px";
+
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.value = crime;
-            checkbox.dataset.punishment = levelData.punishment;
-            checkbox.dataset.fine = levelData.fine;
-            checkbox.dataset.level = levelData.level;
+            checkbox.dataset.punishment = level.punishment;
+            checkbox.dataset.level = level.level;
             checkbox.addEventListener("change", updateEmbed);
-            section.appendChild(checkbox);
-            section.append(` ${crime}`);
-            section.appendChild(document.createElement("br"));
+            container.appendChild(checkbox);
+
+            const label = document.createElement("span");
+            label.textContent = ` ${crime}`;
+            container.appendChild(label);
+
+            // Thêm ô nhập số lần vi phạm cho các tội danh đặc biệt
+            if (
+                crime === "Tấn công gây thương tích nghiêm trọng cho người khác" ||
+                crime === "Tấn công Cán bộ Cấp Cao" ||
+                crime === "Tấn công Nhân viên y tế" ||
+                crime === "Tấn công Nhân viên báo chí" ||
+                crime === "Sử dụng vũ khí tấn công sĩ quan Quân đội, đặc vụ FIB, sĩ quan Cảnh sát, giảng viên Học viện, nhân viên MW" ||
+                crime === "Tội Danh Bạo Động (tối đa 1000 phút)" ||
+                crime === "Tội danh tấn công trụ sở, nơi làm việc thuộc Ban ngành Nhà nước (tối đa 1000 phút)"
+            ) {
+                const input = document.createElement("input");
+                input.type = "number";
+                input.min = 1;
+                input.value = 1;
+                input.style.marginLeft = "10px";
+                input.style.width = "50px";
+                input.dataset.crime = crime;
+                input.addEventListener("input", updateEmbed);
+
+                // Giới hạn tối đa 5 lần cho Mức độ 6
+                if (level.level === 6) {
+                    input.max = 5;
+                }
+
+                container.appendChild(input);
+            }
+
+            section.appendChild(container);
         });
 
         violationList.appendChild(section);
     });
 }
 
+// Hàm cập nhật tổng mức án
 function updateEmbed() {
     let selectedCrimes = [];
     let totalMinutes = 0;
     let totalFine = 0;
     let level1to5Minutes = 0;
-    let hasComboGun = false;
 
-    document.querySelectorAll("input[type='checkbox']:checked").forEach((checkbox) => {
+    document.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
         const crime = checkbox.value;
         const punishment = parseInt(checkbox.dataset.punishment, 10);
         const level = parseInt(checkbox.dataset.level, 10);
 
-        if (level === 6) {
-            // Xử lý mức độ 6: Yêu cầu nhập số lần vi phạm
-            if (!violationCounts[crime]) {
-                let multiplier = prompt(`Số lần thực hiện hành vi "${crime}" (1–5 lần):`, 1);
-                multiplier = Math.min(5, Math.max(1, parseInt(multiplier, 10) || 1)); // Đảm bảo giá trị hợp lệ
-                violationCounts[crime] = multiplier;
+        let minutes = punishment;
+
+        // Xử lý logic cho các tội danh đặc biệt
+        if (
+            crime === "Tấn công gây thương tích nghiêm trọng cho người khác" ||
+            crime === "Tấn công Cán bộ Cấp Cao" ||
+            crime === "Tấn công Nhân viên y tế" ||
+            crime === "Tấn công Nhân viên báo chí" ||
+            crime === "Sử dụng vũ khí tấn công sĩ quan Quân đội, đặc vụ FIB, sĩ quan Cảnh sát, giảng viên Học viện, nhân viên MW" ||
+            crime === "Tội Danh Bạo Động (tối đa 1000 phút)" ||
+            crime === "Tội danh tấn công trụ sở, nơi làm việc thuộc Ban ngành Nhà nước (tối đa 1000 phút)"
+        ) {
+            const input = document.querySelector(`input[data-crime="${crime}"]`);
+            const multiplier = input ? parseInt(input.value, 10) : 1;
+
+            // Áp dụng giới hạn tối đa cho Mức độ 6
+            if (level === 6) {
+                minutes *= Math.min(multiplier, 5); // Giới hạn tối đa là 5
+            } else {
+                minutes *= multiplier; // Không giới hạn cho Mức độ 3
             }
-            totalMinutes += violationCounts[crime] * punishment;
-            selectedCrimes.push(`${crime} (${violationCounts[crime]} lần)`);
-        } else if (crime === "Combo Súng") {
-            // Logic Combo Súng
-            hasComboGun = true;
+        }
+
+        if (crime === "Combo Súng") {
+            minutes += 30;
             selectedCrimes.push("Sử dụng vũ khí nóng nơi công cộng ( KTNVQS +60p )");
-            totalMinutes += 30;
         } else {
-            // Loại bỏ các tội danh liên quan đến Combo Súng
-            const comboRelatedCrimes = [
-                "Tàng trữ vũ khí nóng trái phép",
-                "Sử dụng vũ khí nóng trái phép",
-                "Sử dụng vũ khí nóng nơi công cộng"
-            ];
+            selectedCrimes.push(crime);
+        }
 
-            if (!hasComboGun || !comboRelatedCrimes.includes(crime)) {
-                selectedCrimes.push(crime);
-                totalMinutes += punishment;
-                totalFine += parseInt(checkbox.dataset.fine, 10);
+        totalMinutes += minutes;
+        totalFine += parseInt(checkbox.dataset.fine || 0, 10);
 
-                if (level >= 1 && level <= 5) {
-                    level1to5Minutes += punishment;
-                }
-            }
+        // Cộng dồn số phút cho mức độ 1-5
+        if (level >= 1 && level <= 5) {
+            level1to5Minutes += minutes;
         }
     });
 
-    // Kiểm tra giới hạn mức độ 1-5
+    // Kiểm tra giới hạn tổng thời gian mức độ 1-5
     if (level1to5Minutes > 500) {
-        const excess = level1to5Minutes - 500;
-        totalMinutes -= excess;
+        totalMinutes -= level1to5Minutes - 500;
     }
 
     embedCrimes.textContent = selectedCrimes.join(", ");
     embedTotal.textContent = `${totalMinutes} phút`;
-    embedFine.textContent = `${totalFine}$`;
 }
 
 // Hàm sao chép thông tin
 function copyEmbedContent() {
-    const embedText = `Tên: 
-CCCD: 
+    const embedText = `Tên:
+CCCD:
 Tội danh: ${embedCrimes.textContent}
-Mức án: ${embedTotal.textContent}
-Tiền phạt: ${embedFine.textContent}`;
+Mức án: ${embedTotal.textContent}`;
 
     const tempTextArea = document.createElement('textarea');
     tempTextArea.value = embedText;
@@ -238,7 +274,7 @@ Tiền phạt: ${embedFine.textContent}`;
     alert('Thông tin đã được sao chép vào clipboard!');
 }
 
-// Khởi tạo danh sách tội danh
+// Khởi tạo danh sách vi phạm
 renderCrimeCheckboxes();
 
 // Thêm sự kiện click cho nút "Sao chép"
