@@ -111,3 +111,54 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
+
+/* Input số lần vi phạm */
+input[type="number"] {
+    width: 70px;
+    padding: 5px;
+    font-size: 1em;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+/* Tăng giảm số lần vi phạm */
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-group button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-group button:hover {
+    background-color: #218838;
+}
+
+.input-group button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.input-group input[type="number"] {
+    width: 20px;
+    padding: 3px;
+    font-size: 1em;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
