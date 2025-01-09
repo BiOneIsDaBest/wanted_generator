@@ -204,6 +204,8 @@ function updateEmbed() {
     let totalFine = 0;
     let level1to5Minutes = 0;
 
+    const comboGunSelected = document.querySelector("input[value='Combo Súng']:checked");
+
     document.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
         const crime = checkbox.value;
         const punishment = parseInt(checkbox.dataset.punishment, 10);
@@ -211,31 +213,44 @@ function updateEmbed() {
 
         let minutes = punishment;
 
-        // Xử lý logic cho các tội danh đặc biệt
-        if (
-            crime === "Tấn công gây thương tích nghiêm trọng cho người khác" ||
-            crime === "Tấn công Cán bộ Cấp Cao" ||
-            crime === "Tấn công Nhân viên y tế" ||
-            crime === "Tấn công Nhân viên báo chí" ||
-            crime === "Sử dụng vũ khí tấn công sĩ quan Quân đội, đặc vụ FIB, sĩ quan Cảnh sát, giảng viên Học viện, nhân viên MW" ||
-            crime === "Tội Danh Bạo Động (tối đa 1000 phút)" ||
-            crime === "Tội danh tấn công trụ sở, nơi làm việc thuộc Ban ngành Nhà nước (tối đa 1000 phút)"
-        ) {
-            const input = document.querySelector(`input[data-crime="${crime}"]`);
-            const multiplier = input ? parseInt(input.value, 10) : 1;
-
-            // Áp dụng giới hạn tối đa cho Mức độ 6
-            if (level === 6) {
-                minutes *= Math.min(multiplier, 5); // Giới hạn tối đa là 5
-            } else {
-                minutes *= multiplier; // Không giới hạn cho Mức độ 3
+        // Nếu Combo Súng được chọn, bỏ qua các tội danh liên quan
+        if (comboGunSelected) {
+            const relatedCrimes = [
+                "Tàng trữ vũ khí nóng trái phép",
+                "Sử dụng vũ khí nóng trái phép",
+                "Sử dụng vũ khí nóng nơi công cộng"
+            ];
+            if (relatedCrimes.includes(crime)) {
+                return; // Bỏ qua, không cộng thời gian cho các tội danh liên quan
             }
         }
 
+        // Xử lý Combo Súng
         if (crime === "Combo Súng") {
-            minutes += 30;
+            minutes = 30; // Đảm bảo chỉ tính 30 phút
             selectedCrimes.push("Sử dụng vũ khí nóng nơi công cộng ( KTNVQS +60p )");
         } else {
+            // Xử lý logic cho các tội danh đặc biệt với số lần vi phạm
+            if (
+                crime === "Tấn công gây thương tích nghiêm trọng cho người khác" ||
+                crime === "Tấn công Cán bộ Cấp Cao" ||
+                crime === "Tấn công Nhân viên y tế" ||
+                crime === "Tấn công Nhân viên báo chí" ||
+                crime === "Sử dụng vũ khí tấn công sĩ quan Quân đội, đặc vụ FIB, sĩ quan Cảnh sát, giảng viên Học viện, nhân viên MW" ||
+                crime === "Tội Danh Bạo Động (tối đa 1000 phút)" ||
+                crime === "Tội danh tấn công trụ sở, nơi làm việc thuộc Ban ngành Nhà nước (tối đa 1000 phút)"
+            ) {
+                const input = document.querySelector(`input[data-crime="${crime}"]`);
+                const multiplier = input ? parseInt(input.value, 10) : 1;
+
+                // Áp dụng giới hạn tối đa cho Mức độ 6
+                if (level === 6) {
+                    minutes *= Math.min(multiplier, 5); // Giới hạn tối đa là 5
+                } else {
+                    minutes *= multiplier; // Không giới hạn cho Mức độ 3
+                }
+            }
+
             selectedCrimes.push(crime);
         }
 
@@ -255,6 +270,7 @@ function updateEmbed() {
 
     embedCrimes.textContent = selectedCrimes.join(", ");
     embedTotal.textContent = `${totalMinutes} phút`;
+    embedFine.textContent = `${totalFine}$`;
 }
 
 // Hàm sao chép thông tin
