@@ -295,3 +295,6 @@ renderCrimeCheckboxes();
 
 // Thêm sự kiện click cho nút "Sao chép"
 document.getElementById('copy-btn').addEventListener('click', copyEmbedContent);
+
+
+           // Created by BiOneIsDaBest
