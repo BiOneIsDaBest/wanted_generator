@@ -268,7 +268,7 @@ function updateEmbed() {
         totalMinutes -= level1to5Minutes - 500;
     }
 
-    embedCrimes.textContent = selectedCrimes.join(", ");
+    embedCrimes.textContent = selectedCrimes.join("+ ");
     embedTotal.textContent = `${totalMinutes} phút`;
     embedFine.textContent = `${totalFine}$`;
 }
