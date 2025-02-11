@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hỗ trợ lập án truy nã</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="css/wantedmenu.css">
     <script defer src="js/wantedmenu.js"></script>
 </head>
 <body>
@@ -19,12 +19,20 @@
         <a href="#SM">🌐 Social Media</a>
     </nav>
 
-    <div class="PAmenu_items">
-        <a href="hotrolapan/index.html" style="text-decoration: none; color: inherit;">
-          <img class="PAmenu_img" src="assets/wcg.png" alt="Wanted Case">
-          <div class="PAmenu_title">WANTED CASE GENERATOR</div>
-          <div class="PAmenu_desc">Generate and manage wanted case files seamlessly.</div>
-        </a>
+    <div class="container">
+        <h2>Hỗ trợ lập án truy nã</h2>
+        <div id="violation-list" class="violation-list">
+            <!-- Danh sách tội danh sẽ được thêm vào đây bằng JavaScript -->
+        </div>
+
+        <div class="embed">
+            <p><strong>Tên:</strong></p>
+            <p><strong>CCCD:</strong></p>
+            <p><strong>Tội danh:</strong> <span id="embed-crimes">(Chưa chọn)</span></p>
+            <p><strong>Mức án:</strong> <span id="embed-total">0 phút</span></p>
+            <p><strong>Tiền phạt:</strong> <span id="embed-fine">0$</span></p>
+            <button id="copy-btn">Sao chép</button>
+        </div>
     </div>
 
     <footer>
