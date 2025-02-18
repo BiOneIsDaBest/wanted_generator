@@ -19,7 +19,7 @@ For Level 1-5 offenses, the total penalty is capped at 500 minutes.
 Users can copy the penalty summary (including name, violations, total penalty time, and fines) to the clipboard.
 
 @created by BiOneIsDaBest // mã nguồn mở ae dùng để cre cho tui là đc nhé!!!
-"This is an open-source project. Feel free to use it, just make sure to credit me!"
+- "This is an open-source project. Feel free to use it, just make sure to credit me!"
 
 # Contact
 For questions or feedback, please contact:
