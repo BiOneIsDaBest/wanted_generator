@@ -1,0 +1,266 @@
+/* Header styles */
+#menu_text {
+    background-color: #522c5d;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    font-family: Arial, sans-serif;
+}
+
+.title-text {
+    font-size: 2em;
+    font-weight: bold;
+    display: block;
+}
+
+/* Navigation menu */
+nav {
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+nav a {
+    color: white;
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+nav a:hover {
+    background-color: #ddd;
+    color: black;
+    transform: scale(1.1);
+}
+
+
+/* Main container layout */
+#flex_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+    gap: 20px;
+}
+
+.lesson-item {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+    width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    animation: fadeInUp 0.5s ease-in-out both;
+}
+
+/* Hover hiệu ứng */
+.lesson-item:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    background-color: #f8f8f8;
+}
+
+/* Hiệu ứng fade in cho các lesson-item */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lesson-item h3 {
+    font-size: 1.5em;
+    color: #522c5d;
+    margin: 10px 0;
+}
+
+.lesson-item p {
+    font-size: 1em;
+    color: #333;
+    margin: 10px 0;
+}
+
+.lesson-item button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #5c3c92;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.lesson-item button:hover {
+    background-color: #4a2f78;
+}
+
+/* Modal */
+.modal {
+    display: none; /* Ngăn modal mở ngay khi tải trang */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Animation mở modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Animation đóng modal */
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+}
+
+/* Áp dụng hiệu ứng vào modal */
+.modal-open-animation {
+    animation: modalFadeIn 0.3s ease-in-out;
+}
+
+.modal-close-animation {
+    animation: modalFadeOut 0.3s ease-in-out;
+}
+
+/* Áp dụng hiệu ứng vào modal */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 70%;
+    max-width: 900px;
+    max-height: 85vh;
+    position: relative;
+    resize: both;
+    overflow: auto;
+    min-width: 400px;
+    min-height: 300px;
+    max-width: 90vw;
+    max-height: 90vh;
+    animation: modalFadeIn 0.3s ease-in-out;
+}
+
+/* Header modal */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+/* Nút đóng modal */
+.close {
+    font-size: 1.5em;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+    background: none;
+    outline: none;
+    color: #333;
+}
+
+.close:hover {
+    color: red;
+}
+
+/* Nút Canva trong modal */
+.modal-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
+    text-align: center;
+}
+
+.modal-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Nội dung modal */
+.modal-body {
+    overflow-y: auto;
+    max-height: 70vh;
+    padding: 15px;
+    text-align: left;
+}
+
+/* Footer modal (nếu cần) */
+.modal-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+    background-color: #f8f8f8;
+}
+
+/* Tay cầm kéo giãn modal */
+.resize-handle {
+    width: 15px;
+    height: 15px;
+    background: gray;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    cursor: nwse-resize;
+    border-radius: 3px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    font-size: 0.9em;
+}
+
+footer a {
+    color: white;
+    text-decoration: underline;
+}
+
+footer a:hover {
+    color: #ddd;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Academy Training</title>
+    <link rel="stylesheet" href="css/education.css">
+    <script defer src="js/education.js"></script>
+</head>
+<body>
+    <h1 id="menu_text">
+        <span class="title-text">Police Academy</span>
+    </h1>
+
+    <nav>
+        <a href="../index.html">🏠 Home</a>
+        <a href="../giaoduc/index.html">🎓 Education and Training</a>
+        <a href="#HR">👩‍💼 Human Resources</a>
+        <a href="#SD">🛡 Security Division</a>
+        <a href="#SM">🌐 Social Media</a>
+    </nav>
+    
+    <div id="flex_container">
+        <div class="lesson-item">
+            <h3>Giáo Trình Đào Tạo Học Viên</h3>
+            <p>Giáo Trình chi tiết đào tạo Nhân Viên ban ngành, Học và Cấp giấy chứng nhận hành nghề sĩ quan</p>
+            <button onclick="showLessonDetails('Day 1')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Giáo Trình Đào Tạo Chính Quy</h3>
+            <p>Giáo Trình đào tạo nhân viên chính quy Học Viện</p>
+            <button onclick="showLessonDetails('Day 2')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Luật Sử Dụng Súng Điện</h3>
+            <p>Quy định về việc sử dụng súng điện trong công tác.</p>
+            <button onclick="showLessonDetails('Day 3')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Các Bước Tương Tác Giao Thông</h3>
+            <p>Hướng dẫn chi tiết về các bước xử lý vi phạm giao thông.</p>
+            <button onclick="showLessonDetails('Day 4')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Các Bước Tương Tác Hình Sự</h3>
+            <p>Hướng dẫn chi tiết về tương tác trong các vụ án hình sự.</p>
+            <button onclick="showLessonDetails('Day 5')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Các Nhóm Tội Phạm Chính</h3>
+            <p>Phân loại và nhận diện các nhóm tội phạm chính.</p>
+            <button onclick="showLessonDetails('Day 6')">View Details</button>
+        </div>
+
+        <div class="lesson-item">
+            <h3>Code BK Thông dụng</h3>
+            <p>Danh sách các mã code quan trọng cần nhớ.</p>
+            <button onclick="showLessonDetails('Day 7')">View Details</button>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP -->
+    <div id="lesson-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Được tạo bởi @BiOne - <a href="mailto:bione.4477@gmail.com">bione.4477@gmail.com</a></p>
+        <p><img src="assets/github-icon.png" width="20">Github:<a href="https://github.com/BiOneIsDaBest">@BiOneIsDaBest</a></p>
+        <a href="https://facebook.com/BiOneIsDaBest"><img src="assets/fb-icon.png" alt="Facebook" width="20"></a>
+    </footer>    
+</body>
+</html>
